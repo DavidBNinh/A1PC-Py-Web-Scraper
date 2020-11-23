@@ -42,11 +42,23 @@ for container in arts_div:
     dates.append(date)
     
 #description
-arts_div = soup.find_all('div', class_='field-item even')
-for containter in range(10):
-    desc = 'Click the event for more info'
+arts_div = []
+arts_div = soup.find_all('div', class_='field-items')
+print(arts_div)
+x = 0
+for container in arts_div:
+    desc = container.text
     print(desc)
-    descriptions.append(desc)
+    if x == 2:
+        #descriptions.append('Not Available')
+        print('Not Available')
+    else:
+        descriptions.append(desc)
+    x = x + 1
+if arts_div == []:   
+    for x in range(10):
+        descriptions.append('Not Available')
+        print('Not Available')
 
 #URLs
 arts_div = soup.find_all('h3', class_='node-title')    
@@ -82,11 +94,17 @@ for container in arts_div:
     dates.append(date)
 
 #Description
+arts_div = []
+print('Finding descriptions')
 arts_div = soup.find_all('span', class_='excerpt')
-for containter in arts_div:
+for container in arts_div:
+    print(container.text)
     desc = container.text
-    print(desc)
     descriptions.append(desc)
+if arts_div == []:   
+    for x in range(5):
+        descriptions.append('Not Available')
+        print('Not Available')
 
 #URLs
 arts_div = soup.find_all('p', class_='event-title')    
@@ -122,14 +140,15 @@ for container in arts_div:
     dates.append(date)
     
 #Description
-try:
-    arts_div = soup.find_all('h4', class_='exhibition-promo__subtitle')
-except:
-    arts_div = 'Not Available'
-for containter in arts_div:
-    print(container.text)
+print('Finding descriptions')
+arts_div = soup.find_all('h4', class_='exhibition-promo__subtitle')
+for container in arts_div:
     desc = container.text
     descriptions.append(desc)
+if arts_div == []:   
+    for x in range(3):
+        descriptions.append('Not Available')
+        print('Not Available')
     
 #URL
 arts_div = soup.find_all('div', class_='full-width-inner')    
@@ -167,14 +186,15 @@ for container in arts_div:
     dates.append(date + ' ' + str(thisyear.year))
     
 #Description
-try:
-    arts_div = soup.find_all('div', class_='ecs-excerpt')
-except:
-    arts_div = 'Not Available'
-for containter in arts_div:
-    print(container.text)
+print('Finding descriptions')
+arts_div = soup.find_all('div', class_='ecs-excerpt')
+for container in arts_div:
     desc = container.text
     descriptions.append(desc)
+if arts_div == []:   
+    for x in range(50):
+        descriptions.append('Not Available')
+        print('Not Available')
     
 #URL
 arts_div = soup.find_all('div', class_='entry-title summary') 
@@ -196,7 +216,7 @@ for container in arts_div:
     print(container.text)
     name = container.text.strip()
     titles.append(name)
-    locations.append(loca[3])
+    locations.append(loca[4])
 
 #Date
 try:
@@ -213,15 +233,16 @@ for container in arts_div:
     dates.append(date)
     
 #Description
-try:
-    arts_div = soup.find_all('div', class_='ecs-excerpt')
-except:
-    arts_div = 'Not Available'
-for containter in arts_div:
-    print(container.text)
+print('Finding descriptions')
+arts_div = soup.find_all('div', class_='ecs-excerpt')
+for container in arts_div:
     desc = container.text
     descriptions.append(desc)
-    
+if arts_div == []:   
+    for x in range(11):
+        descriptions.append('Please visit the event link for more details.')
+        print('Please visit the event link for more details.')
+
 #URL
 arts_div = soup.find_all('h2', class_='title') 
 print('Finding URLs')
@@ -235,7 +256,7 @@ elist = {
     'Events': titles,
     'Dates' : dates,
     'Locations' : locations,
-    #'Descriptions' : descriptions,
+    'Descriptions' : descriptions,
     'URLS' : urls
 }
 
