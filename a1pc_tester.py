@@ -5,10 +5,12 @@ from listy import baseurl
 from listy import url
 from listy import loca
 import pandas as pd
-import numpy as np
 import requests
+import datetime
 from time import sleep
 from random import randint
+
+thisyear = datetime.date.today()
 
 #Dallas Arts Museum
 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36'}
@@ -162,6 +164,52 @@ print('Finding dates')
 for container in arts_div:
     print(container.text)
     date = container.text.strip()
+    dates.append(date + ' ' + str(thisyear.year))
+    
+#Description
+try:
+    arts_div = soup.find_all('div', class_='ecs-excerpt')
+except:
+    arts_div = 'Not Available'
+for containter in arts_div:
+    print(container.text)
+    desc = container.text
+    descriptions.append(desc)
+    
+#URL
+arts_div = soup.find_all('div', class_='entry-title summary') 
+print('Finding URLs')
+for container in arts_div:
+    for link in container.find_all('a'):
+        print(link['href'])
+        urls.append(link['href'])
+
+#Eismann Center
+results = requests.get(url[4], headers=headers)
+
+soup = BeautifulSoup(results.text, 'lxml')
+
+#Titles & locations
+arts_div = soup.find_all('h2', class_='title')
+print('Finding title ' + str(arts_div))
+for container in arts_div:
+    print(container.text)
+    name = container.text.strip()
+    titles.append(name)
+    locations.append(loca[3])
+
+#Date
+try:
+    arts_div = soup.find_all('div', class_='link')
+except:
+    arts_div = 'Not Available'        
+print('Finding dates')
+badchars = 'Streaming available'
+for container in arts_div:
+    print(container.text)
+    date = container.text.strip()
+    date = date.replace(badchars, '')
+    print(date)
     dates.append(date)
     
 #Description
@@ -175,19 +223,19 @@ for containter in arts_div:
     descriptions.append(desc)
     
 #URL
-arts_div = soup.find_all('div', class_='entry-title summary')    
+arts_div = soup.find_all('h2', class_='title') 
 print('Finding URLs')
 for container in arts_div:
-    for link in container.find_all('a', href=True, class_='field-promo-image'):
+    for link in container.find_all('a'):
         print(link['href'])
-        urls.append(link['href'])
-
+        urls.append(baseurl[4] + link['href'])
+        
 #Create List
 elist = {
     'Events': titles,
     'Dates' : dates,
     'Locations' : locations,
-    'Descriptions' : descriptions,
+    #'Descriptions' : descriptions,
     'URLS' : urls
 }
 
