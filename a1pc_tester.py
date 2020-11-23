@@ -23,6 +23,7 @@ dates = []
 locations = []
 descriptions = []
 urls = []
+eventlinks = []
 
 #Titles & locations
 arts_div = soup.find_all('h3')
@@ -205,9 +206,16 @@ for container in arts_div:
         urls.append(link['href'])
 
 #Eismann Center
-results = requests.get(url[4], headers=headers)
+r = requests.get(url[4])
+soup = BeautifulSoup(r.content, 'lxml')
+eventlist = soup.find_all('h2', class_='title')
 
-soup = BeautifulSoup(results.text, 'lxml')
+#URLS FOR LIST AND CSV
+for item in eventlist:
+    for link in item.find_all('a', href=True):
+        eventlinks.append(baseurl[4] + link['href'])
+        urls.append(baseurl[4] + link['href'])
+        print(baseurl[4] + link['href'])
 
 #Titles & locations
 arts_div = soup.find_all('h2', class_='title')
@@ -217,7 +225,7 @@ for container in arts_div:
     name = container.text.strip()
     titles.append(name)
     locations.append(loca[4])
-
+        
 #Date
 try:
     arts_div = soup.find_all('div', class_='link')
@@ -232,24 +240,20 @@ for container in arts_div:
     print(date)
     dates.append(date)
     
-#Description
-print('Finding descriptions')
-arts_div = soup.find_all('div', class_='ecs-excerpt')
-for container in arts_div:
-    desc = container.text
-    descriptions.append(desc)
-if arts_div == []:   
-    for x in range(11):
-        descriptions.append('Please visit the event link for more details.')
-        print('Please visit the event link for more details.')
+x = 1
+for link in eventlinks:
+    r = requests.get(link, headers=headers)
+    soup = BeautifulSoup(r.content, 'lxml')
 
-#URL
-arts_div = soup.find_all('h2', class_='title') 
-print('Finding URLs')
-for container in arts_div:
-    for link in container.find_all('a'):
-        print(link['href'])
-        urls.append(baseurl[4] + link['href'])
+    try:
+        desc = soup.find('div', class_='tess-content').text.strip()
+    except:
+        desc = 'dne'
+    
+    perc = (x / len(eventlinks)) * 100
+    print('Saving: ' + str(round(perc)) + '%')
+    descriptions.append(desc)
+    x = x + 1
         
 #Create List
 elist = {
@@ -259,7 +263,7 @@ elist = {
     'Descriptions' : descriptions,
     'URLS' : urls
 }
-
+print(elist)
 #Create Dataframe
 artevents = pd.DataFrame(elist)
 
@@ -274,3 +278,5 @@ print(artevents.isnull().sum())
 
 #move all scraped data to a CSV file
 artevents.to_csv('arteventstester.csv')
+
+print('Saving complete. Please refer to artseventstester.csv')
