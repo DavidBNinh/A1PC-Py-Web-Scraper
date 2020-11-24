@@ -256,11 +256,10 @@ for link in eventlinks:
     descriptions.append(desc)
     x = x + 1
 
-    
-    
 #Dallas Symphony
 r = requests.get(url[5])
 soup = BeautifulSoup(r.content, 'lxml')
+eventlinks = []
 eventlist = soup.find_all('h1', class_='title')
 
 #URLS FOR LIST AND CSV
@@ -292,6 +291,53 @@ for link in eventlinks:
         date = 'Not Available'    
     try:
         desc = soup.find('div', class_='prod-detail__program_highlights').text.strip()
+    except:
+        desc = 'dne'
+    
+    perc = (x / len(eventlinks)) * 100
+    print('Saving: ' + str(round(perc)) + '%')
+    descriptions.append(desc)
+    dates.append(date)
+    print(desc)
+    print(date)
+    x = x + 1
+    
+    
+#Glasstire
+r = requests.get(url[6])
+soup = BeautifulSoup(r.content, 'lxml')
+eventlinks = []
+eventlist = soup.find_all('h3', class_='grid-title')
+
+#URLS FOR LIST AND CSV
+for item in eventlist:
+    for link in item.find_all('a', href=True):
+        eventlinks.append(baseurl[6] + link['href'])
+        urls.append(baseurl[6] + link['href'])
+        print(baseurl[6] + link['href'])
+
+#Titles & locations
+arts_div = soup.find_all('h3', class_='grid-title')
+print('Finding title ' + str(arts_div))
+for container in arts_div:
+    print(container.text)
+    name = container.text.strip()
+    titles.append(name)
+    locations.append(loca[6])
+        
+
+#Description / Date    
+x = 1
+for link in eventlinks:
+    r = requests.get(link, headers=headers)
+    soup = BeautifulSoup(r.content, 'lxml')
+    
+    try:
+        date = soup.find('h4').text.strip()
+    except:
+        date = 'Not Available'    
+    try:
+        desc = soup.find('div', class_='inner-post-entry').text.strip()
     except:
         desc = 'dne'
     
