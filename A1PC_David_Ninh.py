@@ -350,6 +350,104 @@ for link in eventlinks:
     x = x + 1
 
     
+#Nasher Sculpture Center
+r = requests.get(url[7])
+soup = BeautifulSoup(r.content, 'lxml')
+eventlinks = []
+eventlist = soup.find_all('h5', class_='card-title')
+
+#URLS FOR LIST AND CSV
+for item in eventlist:
+    for link in item.find_all('a', href=True):
+        eventlinks.append(baseurl[7] + link['href'])
+        urls.append(baseurl[7] + link['href'])
+        print(baseurl[7] + link['href'])
+
+#Titles & locations
+arts_div = soup.find_all('h5', class_='card-title')
+print('Finding title ' + str(arts_div))
+for container in arts_div:
+    print(container.text)
+    name = container.text.strip()
+    titles.append(name)
+    locations.append(loca[7])
+        
+
+#Description / Date    
+x = 1
+for link in eventlinks:
+    r = requests.get(link, headers=headers)
+    soup = BeautifulSoup(r.content, 'lxml')
+    
+    try:
+        date = soup.find('span', class_='engSubTitle lh-sub').text.strip()
+    except:
+        date = 'Not Available'    
+    try:
+        desc = soup.find('div', class_='shortDesc').text.strip()
+    except:
+        desc = 'dne'
+    
+    perc = (x / len(eventlinks)) * 100
+    print('Saving: ' + str(round(perc)) + '%')
+    descriptions.append(desc)
+    dates.append(date)
+    print(desc)
+    print(date)
+    x = x + 1
+
+#Dallas Broadway
+r = requests.get(url[8])
+soup = BeautifulSoup(r.content, 'lxml')
+eventlinks = []
+eventlist = soup.find_all('h3', class_='h4 engagement-card__title')
+
+#URLS FOR LIST AND CSV
+for item in eventlist:
+    for link in item.find_all('a', href=True):
+        eventlinks.append(link['href'])
+        urls.append(link['href'])
+        print(link['href'])
+
+
+#Titles & locations
+arts_div = soup.find_all('h3', class_='h4 engagement-card__title')
+print('Finding title ' + str(arts_div))
+for container in arts_div:
+    print(container.text)
+    name = container.text.strip()
+    titles.append(name)
+    locations.append(loca[8])
+
+#Description
+print('Finding descriptions')
+arts_div = soup.find_all('p', class_='engagement-card__short-description')
+for container in arts_div:
+    desc = container.text
+    descriptions.append(desc)
+if arts_div == []:   
+    for x in range(50):
+        descriptions.append('Not Available')
+        print('Not Available')
+        
+#Date    
+x = 1
+for link in eventlinks:
+    r = requests.get(link, headers=headers)
+    soup = BeautifulSoup(r.content, 'lxml')
+    
+    try:
+        date = soup.find('p', class_='engagement-card__performance-dates').text.strip()
+    except:
+        date = 'TBD'    
+    
+    perc = (x / len(eventlinks)) * 100
+    print('Saving: ' + str(round(perc)) + '%')
+    descriptions.append(desc)
+    dates.append(date)
+    print(desc)
+    print(date)
+    x = x + 1
     
          
 #Create List
